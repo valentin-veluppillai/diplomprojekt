@@ -58,9 +58,6 @@ QueueHandle_t queueRxST, queueTxST;
 int flagUSART3TxCplt = 1;
 int flagUSART3RxCplt = 0;
 
-char serverLine1[DBG_LINE_SIZE] = "";
-char serverLine2[DBG_LINE_SIZE] = "";
-
 void uartTask() {
 	uint8_t byteToSend[DBG_LINE_SIZE];
 	int waitingBytes = 0;
@@ -77,6 +74,8 @@ void uartTask() {
 }
 
 void uartInit() {
+	xTaskCreate(uartTask, "rxtxST", 200+DBG_LINE_SIZE, NULL, 10, NULL);
+	xTaskCreate(commandParserTask, "commandParser", 100+ARG_SIZE*ARG_COUNT+CMD_SIZE, NULL, 10, NULL);
 	mutexSerialCom = xSemaphoreCreateMutex();
 	mutexUART3 = xSemaphoreCreateMutex();
 	queueRxST = xQueueCreate( 100, 1);
@@ -145,8 +144,6 @@ void commandParserTask(){
 				else if(0 == strcmp(cmdBuffer, "rbt")) { stprint("REBOOTING..."); NVIC_SystemReset(); }
 				else if(0 == strcmp(cmdBuffer, "eon")) echoFlag = 1;
 				else if(0 == strcmp(cmdBuffer, "eoff")) echoFlag = 0;
-				else if(0 == strcmp(cmdBuffer, "sd1")) strcpy(serverLine1, argBuffer);
-				else if(0 == strcmp(cmdBuffer, "sd2")) strcpy(serverLine2, argBuffer);
 				else stprint("\nUnknown command: %s", cmdBuffer);
 			}
 
