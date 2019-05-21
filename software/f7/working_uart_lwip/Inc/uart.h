@@ -57,7 +57,7 @@ stprint("\n\r\033cBOOTED\n------\n");
 
 #define ST_USART huart3
 #define ST_USART_LL USART3
-#define DBG_LINE_SIZE 32
+#define DBG_LINE_SIZE 56
 #define RETURN_CHAR '\r'
 #define CMD_CHAR '#'
 #define SEP_CHAR ' '

@@ -44,8 +44,8 @@
 /* Private variables ---------------------------------------------------------*/
 u32_t nPageHits = 0;
 
-extern char* serverLine1;
-extern char* serverLine2;
+char serverLine1[10];
+char* serverLine2 = "no event yet";
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -77,28 +77,36 @@ void http_server_serve(struct netconn *conn)
       if ((buflen >=5) && (strncmp(buf, "GET /", 5) == 0))
       {
     	  if (strncmp((char const *)buf,"GET /index.html",15)==0) {
-    		  netconn_write(conn, (const unsigned char*)index_html, index_html_len, NETCONN_NOCOPY);
-    	  }
-    	  if (strncmp((char const *)buf,"GET /event1", 9) == 0) {
-    		  stprint("HTTP :: Event 1 triggered\n");
-    	  }
-    	  if (strncmp((char const *)buf,"GET /event2", 9) == 0) {
-    		  stprint("HTTP :: Event 2 triggered\n");
-    	  }
-    	  if (strncmp((char const *)buf,"GET /event3", 9) == 0) {
-    		  stprint("HTTP :: Event 3 triggered\n");
-    	  }
-          if (strncmp((char const *)buf,"GET /event4", 9) == 0) {
-    		  stprint("HTTP :: Event 4 triggered\n");
-    	  }
-    	  if (strncmp((char const *)buf,"GET /data1", 9) == 0) {
-                  //stprint("HTTP :: data 1 requested\n")
-    		  netconn_write(conn, (const unsigned char*)serverLine1, strlen(serverLine1), NETCONN_NOCOPY);
-    	  }
-          if (strncmp((char const *)buf,"GET /data2", 9) == 0) {
-                  //stprint("HTTP :: data 2 requested\n")
-    		  netconn_write(conn, (const unsigned char*)serverLine2, strlen(serverLine2), NETCONN_NOCOPY);
-    	  }
+    	      		  netconn_write(conn, (const unsigned char*)index_html, index_html_len, NETCONN_NOCOPY);
+    	      	  }
+    	      	  if (strncmp((char const *)buf,"GET /event1", 11) == 0) {
+    	      		  stprint("HTTP :: Event 1 triggered\n");
+    	      		  serverLine2 = "EVENT 1";
+    	      		  HAL_GPIO_TogglePin(LDBTN_GPIO_Port, LDBTN_Pin);
+    	      	  }
+    	      	  if (strncmp((char const *)buf,"GET /event2", 11) == 0) {
+    	      		  stprint("HTTP :: Event 2 triggered\n");
+    	      		  serverLine2 = "EVENT 2";
+    	      	  }
+    	      	  if (strncmp((char const *)buf,"GET /event3", 11) == 0) {
+    	      		  stprint("HTTP :: Event 3 triggered\n");
+    	      		  serverLine2 = "EVENT 3";
+    	      	  }
+    	            if (strncmp((char const *)buf,"GET /event4", 11) == 0) {
+    	      		  stprint("HTTP :: Event 4 triggered\n");
+    	      		  serverLine2 = "EVENT 4";
+    	      	  }
+    	      	  if (strncmp((char const *)buf,"GET /data1", 10) == 0) {
+    	                //stprint("HTTP :: data 1 requested\n");
+    	      		  sprintf(serverLine1, "%i s", (int)(xTaskGetTickCount() / portTICK_PERIOD_MS)/1000 );
+    	      		 // stprint("%i, ", (xTaskGetTickCount() / portTICK_PERIOD_MS)/1000);
+    	      		 // stprint("%s\n", serverLine1);
+    	      		  netconn_write(conn, (const unsigned char*)serverLine1, strlen(serverLine1), NETCONN_NOCOPY);
+    	      	  }
+    	            if (strncmp((char const *)buf,"GET /data2", 10) == 0) {
+    	                    //stprint("HTTP :: data 2 requested\n");
+    	      		  netconn_write(conn, (const unsigned char*)serverLine2, strlen(serverLine2), NETCONN_NOCOPY);
+    	      	  }
         }
       }
     }

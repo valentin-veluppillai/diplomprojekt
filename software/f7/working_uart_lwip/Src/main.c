@@ -358,9 +358,6 @@ static void MX_GPIO_Init(void)
 
 void startupTask() {
 	HAL_GPIO_WritePin(LDOSR_GPIO_Port, LDOSR_Pin, GPIO_PIN_SET);
-	xTaskCreate(uartTask, "rxtxST", 100, NULL, 10, NULL);
-	xTaskCreate(buttonTask, "button", 10, NULL, 10, NULL);
-	xTaskCreate(commandParserTask, "commandParser", 100+ARG_SIZE*ARG_COUNT+CMD_SIZE, NULL, 10, NULL);
 	uartInit();
 	stprint("\r\033c");
 	stprint("\n\rRTOS :: booted\n\n");

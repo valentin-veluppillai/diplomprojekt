@@ -1,11 +1,11 @@
 # `[ARCHIVED]`
-# demo webserver
+# demo_webserver
 
 this is the webserver used for the first presentation.
 
 ## purpose
 
-this was intended as a proof of work, and was used for the first presentation. 
+this was intended as a proof of work, and was used for the first presentation.
 
 ## problems
 ### command parser
