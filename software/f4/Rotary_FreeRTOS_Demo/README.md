@@ -10,4 +10,4 @@ Lineare Helligkeitseinstellung bei ersten paar Stufen merkbar, danach nur mehr k
 
 Möglichkeit: exponentielle Skalierung
 
-In Rotary_FreeRTOS_Working wird diese Variante getestet.
+In Rotary_FreeRTOS_Testing wird diese Variante getestet.
