@@ -1,0 +1,71 @@
+<html>
+<head>
+
+<!-- JQuery Import -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/litera/bootstrap.min.css" rel="stylesheet" integrity="sha384-D/7uAka7uwterkSxa2LwZR7RJqH2X6jfmhkJ0vFPGUtPyBMF2WMq9S+f9Ik5jJu1" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bohttps://stackpath.bootstrapcdn.com/bootswatch/4.3.1/lux/bootstrap.min.cssotstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+  	$(".event").click(function(e) {
+  	    $.get($(this).attr("id"));
+  	});
+	function refreshValues() {
+                $.get("data1", function(res) {
+                        $("#data1").find("b").html(res);
+                });
+                $.get("data2", function(res) {
+                        $("#data2").find("b").html(res);
+                });
+                setTimeout(refreshValues, 250);
+	}
+	setTimeout(refreshValues, 250);
+  });
+
+
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=2 user-scalable=no">
+</head>
+<body>
+<div class="container">
+	<div class="panel panel-default">
+	  <div class="panel-heading">Trigger Events</div>
+	  <div class="panel-body">
+	    <div class="row">
+		<div class="col-md-6 cell">
+	                <button type="button" class="btn btn-default btn-block event" id="event1">Event 1</button>
+		</div>
+		<div class="col-md-6 cell">
+		  	<button type="button" class="btn btn-default btn-block event" id="event2">Event 2</button>
+		</div>
+		<div class="col-md-6 cell">
+		  	<button type="button" class="btn btn-default btn-block event" id="event3">Event 3</button>
+		</div>
+                <div class="col-md-6 cell">
+		  	<button type="button" class="btn btn-default btn-block event" id="event4">Event 4</button>
+		</div>
+		</div>
+	  </div>
+	</div>
+	<div class="panel panel-default">
+	  <div class="panel-heading">Measurement 1</div>
+	  <div class="panel-body">
+	     <div id="data1" class="alert-info" role="alert" style="text-align:center"><b>Heck</b> </div>
+	  </div>
+	</div>
+        <div class="panel panel-default">
+	  <div class="panel-heading">Measurement 2</div>
+	  <div class="panel-body">
+	     <div id="data2" class="alert-success" role="alert" style="text-align:center"><b>idk</b> </div>
+	  </div>
+	</div>
+</div>
+</body>
+</html>
