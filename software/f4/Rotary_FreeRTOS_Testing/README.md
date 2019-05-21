@@ -1,5 +1,5 @@
 # `[WIP]`
-# Rotary Demo mit exponentieller Skalierung
+# Rotary testen mit exponentieller Skalierung
 
 Möglicherweise optisch interessanter
 
