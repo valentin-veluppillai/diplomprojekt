@@ -57,7 +57,7 @@ stprint("\n\r\033cBOOTED\n------\n");
 
 #define ST_USART huart3
 #define ST_USART_LL USART3
-#define DBG_LINE_SIZE 32
+#define DBG_LINE_SIZE 56
 #define RETURN_CHAR '\r'
 #define CMD_CHAR '#'
 #define SEP_CHAR ' '
@@ -65,6 +65,9 @@ stprint("\n\r\033cBOOTED\n------\n");
 #define CMD_SIZE 5
 #define ARG_COUNT 1
 #define ARG_SIZE 20
+
+#define MOTD "enter '#help X' for help with command number X"
+char* helpstrings[] = {"help X\t\t\t\tdisplays info for cmd X", "eon\t\t\t\tenables echo", "eoff\t\t\t\tdisables echo","cls\t\t\t\tscreen clear","rbt\t\t\t\treboot device"}
 
 void stprint(char* format, ...);
 void stclear();

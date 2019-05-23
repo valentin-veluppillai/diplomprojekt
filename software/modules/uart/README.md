@@ -1,16 +1,26 @@
 # `[COMPLETED]`
 # Module: uart
-a simple uart module providing a function called `stprint()`, which can use format input (like `printf()`) to print to a uart bus sepciefied in its header. This requires freertos and was built using CubeIDE.
-## changes
+a simple uart module providing a function called `stprint()`, which can use format input (like `printf()`) to print to a uart bus sepciefied in its header. This requires freertos and was built using CubeIDE. Intended to provide a debugging console, but can probably be used differently.
+## function description
+### `void stprint(char* format, ...)`
+sends format input over uart
+### `void stclear()`
+prints ANSI clearscreen command over uart
+### `void isrprint(char* format, ...)`
+works like `stprint()`, but it can be called from inside interrupts
+### `void uartInit()`
+initializes the uart interface
+
+## necessary changes
 ### CubeMX
-* activate your uart (make sure to set the ST_USART and ST_USART_LL in uart.h accordingly)
+* activate your uart
 * activate freertos
 * activate the usart interrupt in the nested vector interrupt contoller (nvic)
 * generate code
 ### code
 * drop the files/dirs in this directory in your toplevel project folder.
 * set ST_USART and ST_USART_LL in uart.h accordingly
-* delete the line declaring huartx in main.c/main.h (x is an number, default is 3)
+* delete the line declaring huartx in main.c (x is an number, default is 3)
 * include uart.h in your main.h
 * add this to your variable declaration:
 ```

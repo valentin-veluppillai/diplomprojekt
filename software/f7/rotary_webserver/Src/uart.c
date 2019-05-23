@@ -74,12 +74,17 @@ void uartTask() {
 }
 
 void uartInit() {
+	xTaskCreate(uartTask, "rxtxST", 200+DBG_LINE_SIZE, NULL, 10, NULL);
+	xTaskCreate(commandParserTask, "commandParser", 100+ARG_SIZE*ARG_COUNT+CMD_SIZE, NULL, 10, NULL);
 	mutexSerialCom = xSemaphoreCreateMutex();
 	mutexUART3 = xSemaphoreCreateMutex();
 	queueRxST = xQueueCreate( 100, 1);
-	queueTxST = xQueueCreate( 100, 1);
+	queueTxST = xQueueCreate( 1000, 1);
 	xSemaphoreGive(mutexSerialCom);
 	LL_USART_EnableIT_RXNE(ST_USART_LL);
+	stprint("\r\033c");
+	stprint("RTOS :: booted\n\n");
+	stprint("%s\n\n", MOTD);
 }
 
 
@@ -142,6 +147,7 @@ void commandParserTask(){
 				else if(0 == strcmp(cmdBuffer, "rbt")) { stprint("REBOOTING..."); NVIC_SystemReset(); }
 				else if(0 == strcmp(cmdBuffer, "eon")) echoFlag = 1;
 				else if(0 == strcmp(cmdBuffer, "eoff")) echoFlag = 0;
+				else if(0 == strcmp(cmdBuffer, "help")) case argBuffer[0] stprint("\n\n%s\n\n", HELPSTRING);
 				else stprint("\nUnknown command: %s", cmdBuffer);
 			}
 
@@ -186,12 +192,12 @@ void isrprint(char* format, ...){
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	flagUSART3TxCplt = 1;
+	HAL_GPIO_WritePin(LDTX_GPIO_Port, LDTX_Pin, GPIO_PIN_RESET);
 }
 
 void UART_CharReception_Callback(){
+	HAL_GPIO_WritePin(LDRX_GPIO_Port, LDRX_Pin, GPIO_PIN_SET);
 	uint8_t byteToSave = LL_USART_ReceiveData8(ST_USART_LL);
 	xQueueSendToBackFromISR(queueRxST, &byteToSave, NULL);
 	//xQueueSendToBackFromISR(queueTxST, &byteToSave, NULL); //hardcoded echo
 }
-
-

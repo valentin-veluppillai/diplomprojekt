@@ -49,23 +49,20 @@ int errno;
 //  Creates an empty mailbox.
 err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 {
-#if (osCMSIS < 0x20000U)
   osMessageQDef(QUEUE, size, void *);
+  
   *mbox = osMessageCreate(osMessageQ(QUEUE), NULL);
-#else
-  *mbox = osMessageQueueNew(size, sizeof(void *), NULL);
-#endif
-#if SYS_STATS
-  ++lwip_stats.sys.mbox.used;
-  if(lwip_stats.sys.mbox.max < lwip_stats.sys.mbox.used)
-  {
-    lwip_stats.sys.mbox.max = lwip_stats.sys.mbox.used;
-  }
-#endif /* SYS_STATS */
-  if(*mbox == NULL)
-    return ERR_MEM;
 
-  return ERR_OK;
+#if SYS_STATS
+      ++lwip_stats.sys.mbox.used;
+      if (lwip_stats.sys.mbox.max < lwip_stats.sys.mbox.used) {
+         lwip_stats.sys.mbox.max = lwip_stats.sys.mbox.used;
+	  }
+#endif /* SYS_STATS */
+ if (*mbox == NULL)
+  return ERR_MEM;
+ 
+ return ERR_OK;
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -76,26 +73,21 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 */
 void sys_mbox_free(sys_mbox_t *mbox)
 {
-#if (osCMSIS < 0x20000U)
-  if(osMessageWaiting(*mbox))
-#else
-  if(osMessageQueueGetCount(*mbox))
-#endif
-  {
-    /* Line for breakpoint.  Should never break here! */
-    portNOP();
+	if( osMessageWaiting(*mbox) )
+	{
+		/* Line for breakpoint.  Should never break here! */
+		portNOP();
 #if SYS_STATS
-    lwip_stats.sys.mbox.err++;
+	    lwip_stats.sys.mbox.err++;
 #endif /* SYS_STATS */
+			
+		// TODO notify the user of failure.
+	}
 
-  }
-#if (osCMSIS < 0x20000U)
-  osMessageDelete(*mbox);
-#else
-  osMessageQueueDelete(*mbox);
-#endif
+	osMessageDelete(*mbox);
+
 #if SYS_STATS
-  --lwip_stats.sys.mbox.used;
+     --lwip_stats.sys.mbox.used;
 #endif /* SYS_STATS */
 }
 
@@ -103,11 +95,7 @@ void sys_mbox_free(sys_mbox_t *mbox)
 //   Posts the "msg" to the mailbox.
 void sys_mbox_post(sys_mbox_t *mbox, void *data)
 {
-#if (osCMSIS < 0x20000U)
   while(osMessagePut(*mbox, (uint32_t)data, osWaitForever) != osOK);
-#else
-  while(osMessageQueuePut(*mbox, &data, 0, osWaitForever) != osOK);
-#endif
 }
 
 
@@ -115,26 +103,23 @@ void sys_mbox_post(sys_mbox_t *mbox, void *data)
 //   Try to post the "msg" to the mailbox.
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
-  err_t result;
-#if (osCMSIS < 0x20000U)
-  if(osMessagePut(*mbox, (uint32_t)msg, 0) == osOK)
-#else
-  if(osMessageQueuePut(*mbox, &msg, 0, 0) == osOK)
-#endif
-  {
-    result = ERR_OK;
-  }
-  else
-  {
-    // could not post, queue must be full
-    result = ERR_MEM;
+err_t result;
 
+   if ( osMessagePut(*mbox, (uint32_t)msg, 0) == osOK)
+   {
+      result = ERR_OK;
+   }
+   else {
+      // could not post, queue must be full
+      result = ERR_MEM;
+			
 #if SYS_STATS
-    lwip_stats.sys.mbox.err++;
+      lwip_stats.sys.mbox.err++;
 #endif /* SYS_STATS */
-  }
+			
+   }
 
-  return result;
+   return result;
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -155,45 +140,28 @@ err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 */
 u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 {
-#if (osCMSIS < 0x20000U)
   osEvent event;
-  uint32_t starttime = osKernelSysTick();
-#else
-  osStatus_t status;
-  uint32_t starttime = osKernelGetTickCount();
-#endif
+  uint32_t starttime = osKernelSysTick();;
+  
   if(timeout != 0)
-  {
-#if (osCMSIS < 0x20000U)
+  { 
     event = osMessageGet (*mbox, timeout);
-
+    
     if(event.status == osEventMessage)
     {
       *msg = (void *)event.value.v;
       return (osKernelSysTick() - starttime);
     }
-#else
-    status = osMessageQueueGet(*mbox, msg, 0, timeout);
-    if (status == osOK)
-    {
-      return (osKernelGetTickCount() - starttime);
-    }
-#endif
     else
     {
       return SYS_ARCH_TIMEOUT;
-    }
+    } 
   }
   else
   {
-#if (osCMSIS < 0x20000U)
     event = osMessageGet (*mbox, osWaitForever);
     *msg = (void *)event.value.v;
     return (osKernelSysTick() - starttime);
-#else
-    osMessageQueueGet(*mbox, msg, 0, osWaitForever );
-    return (osKernelGetTickCount() - starttime);
-#endif
   }
 }
 
@@ -204,18 +172,13 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 */
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 {
-#if (osCMSIS < 0x20000U)
   osEvent event;
-
+  
   event = osMessageGet (*mbox, 0);
-
+  
   if(event.status == osEventMessage)
   {
     *msg = (void *)event.value.v;
-#else
-  if (osMessageQueueGet(*mbox, msg, 0, 0) == osOK)
-  {
-#endif
     return ERR_OK;
   }
   else
@@ -224,56 +187,49 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
   }
 }
 /*----------------------------------------------------------------------------------*/
-int sys_mbox_valid(sys_mbox_t *mbox)
-{
-  if (*mbox == SYS_MBOX_NULL)
+int sys_mbox_valid(sys_mbox_t *mbox)          
+{      
+  if (*mbox == SYS_MBOX_NULL) 
     return 0;
   else
     return 1;
-}
-/*-----------------------------------------------------------------------------------*/
-void sys_mbox_set_invalid(sys_mbox_t *mbox)
-{
-  *mbox = SYS_MBOX_NULL;
-}
+}                                             
+/*-----------------------------------------------------------------------------------*/                                              
+void sys_mbox_set_invalid(sys_mbox_t *mbox)   
+{                                             
+  *mbox = SYS_MBOX_NULL;                      
+}                                             
 
 /*-----------------------------------------------------------------------------------*/
 //  Creates a new semaphore. The "count" argument specifies
 //  the initial state of the semaphore.
 err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 {
-#if (osCMSIS < 0x20000U)
   osSemaphoreDef(SEM);
-  *sem = osSemaphoreCreate (osSemaphore(SEM), 1);
-#else
-  *sem = osSemaphoreNew(UINT16_MAX, count, NULL);
-#endif
 
+  *sem = osSemaphoreCreate (osSemaphore(SEM), 1);
+	
   if(*sem == NULL)
   {
 #if SYS_STATS
-    ++lwip_stats.sys.sem.err;
-#endif /* SYS_STATS */
-    return ERR_MEM;
+      ++lwip_stats.sys.sem.err;
+#endif /* SYS_STATS */	
+		return ERR_MEM;
   }
-
+	
   if(count == 0)	// Means it can't be taken
   {
-#if (osCMSIS < 0x20000U)
-    osSemaphoreWait(*sem, 0);
-#else
-    osSemaphoreAcquire(*sem, 0);
-#endif
+    osSemaphoreWait(*sem,0);
   }
 
 #if SYS_STATS
-  ++lwip_stats.sys.sem.used;
-  if (lwip_stats.sys.sem.max < lwip_stats.sys.sem.used) {
-    lwip_stats.sys.sem.max = lwip_stats.sys.sem.used;
-  }
+	++lwip_stats.sys.sem.used;
+ 	if (lwip_stats.sys.sem.max < lwip_stats.sys.sem.used) {
+		lwip_stats.sys.sem.max = lwip_stats.sys.sem.used;
+	}
 #endif /* SYS_STATS */
-
-  return ERR_OK;
+		
+	return ERR_OK;
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -294,37 +250,23 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 */
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 {
-#if (osCMSIS < 0x20000U)
   uint32_t starttime = osKernelSysTick();
-#else
-  uint32_t starttime = osKernelGetTickCount();
-#endif
+  
   if(timeout != 0)
-  {
-#if (osCMSIS < 0x20000U)
+  {    
     if(osSemaphoreWait (*sem, timeout) == osOK)
     {
       return (osKernelSysTick() - starttime);
-#else
-    if(osSemaphoreAcquire(*sem, timeout) == osOK)
-    {
-        return (osKernelGetTickCount() - starttime);
-#endif
     }
     else
     {
       return SYS_ARCH_TIMEOUT;
-    }
+    } 
   }
   else
   {
-#if (osCMSIS < 0x20000U)
     while(osSemaphoreWait (*sem, osWaitForever) != osOK);
     return (osKernelSysTick() - starttime);
-#else
-    while(osSemaphoreAcquire(*sem, osWaitForever) != osOK);
-    return (osKernelGetTickCount() - starttime);
-#endif
   }
 }
 
@@ -342,39 +284,31 @@ void sys_sem_free(sys_sem_t *sem)
 #if SYS_STATS
   --lwip_stats.sys.sem.used;
 #endif /* SYS_STATS */
-
+  
   osSemaphoreDelete(*sem);
 }
 /*-----------------------------------------------------------------------------------*/
-int sys_sem_valid(sys_sem_t *sem)
+int sys_sem_valid(sys_sem_t *sem)                                               
 {
   if (*sem == SYS_SEM_NULL)
     return 0;
   else
-    return 1;
+    return 1;                                       
 }
 
-/*-----------------------------------------------------------------------------------*/
-void sys_sem_set_invalid(sys_sem_t *sem)
-{
-  *sem = SYS_SEM_NULL;
-}
+/*-----------------------------------------------------------------------------------*/                                                                                                                                                                
+void sys_sem_set_invalid(sys_sem_t *sem)                                        
+{                                                                               
+  *sem = SYS_SEM_NULL;                                                          
+} 
 
-/*-----------------------------------------------------------------------------------*/
-#if (osCMSIS < 0x20000U)
+/*-----------------------------------------------------------------------------------*/ 
 osMutexId lwip_sys_mutex;
 osMutexDef(lwip_sys_mutex);
-#else
-osMutexId_t lwip_sys_mutex;
-#endif
 // Initialize sys arch
 void sys_init(void)
 {
-#if (osCMSIS < 0x20000U)
   lwip_sys_mutex = osMutexCreate(osMutex(lwip_sys_mutex));
-#else
-  lwip_sys_mutex = osMutexNew(NULL);
-#endif
 }
 /*-----------------------------------------------------------------------------------*/
                                       /* Mutexes*/
@@ -383,22 +317,21 @@ void sys_init(void)
 #if LWIP_COMPAT_MUTEX == 0
 /* Create a new mutex*/
 err_t sys_mutex_new(sys_mutex_t *mutex) {
-
-#if (osCMSIS < 0x20000U)
+  
   osMutexDef(MUTEX);
+  
   *mutex = osMutexCreate(osMutex(MUTEX));
-#else
-  *mutex = osMutexNew(NULL);
-#endif
-
+  
+  
+  //*mutex = xSemaphoreCreateMutex();
   if(*mutex == NULL)
   {
 #if SYS_STATS
     ++lwip_stats.sys.mutex.err;
-#endif /* SYS_STATS */
+#endif /* SYS_STATS */	
     return ERR_MEM;
   }
-
+  
 #if SYS_STATS
   ++lwip_stats.sys.mutex.used;
   if (lwip_stats.sys.mutex.max < lwip_stats.sys.mutex.used) {
@@ -414,18 +347,14 @@ void sys_mutex_free(sys_mutex_t *mutex)
 #if SYS_STATS
       --lwip_stats.sys.mutex.used;
 #endif /* SYS_STATS */
-
+			
   osMutexDelete(*mutex);
 }
 /*-----------------------------------------------------------------------------------*/
 /* Lock a mutex*/
 void sys_mutex_lock(sys_mutex_t *mutex)
 {
-#if (osCMSIS < 0x20000U)
-  osMutexWait(*mutex, osWaitForever);
-#else
-  osMutexAcquire(*mutex, osWaitForever);
-#endif
+  osMutexWait (*mutex, osWaitForever);
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -446,17 +375,8 @@ void sys_mutex_unlock(sys_mutex_t *mutex)
 */
 sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread , void *arg, int stacksize, int prio)
 {
-#if (osCMSIS < 0x20000U)
   const osThreadDef_t os_thread_def = { (char *)name, (os_pthread)thread, (osPriority)prio, 0, stacksize};
   return osThreadCreate(&os_thread_def, arg);
-#else
-  const osThreadAttr_t attributes = {
-                        .name = name,
-                        .stack_size = stacksize,
-                        .priority = (osPriority_t)prio,
-                      };
-  return osThreadNew(thread, arg, &attributes);
-#endif
 }
 
 /*
@@ -477,11 +397,7 @@ sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread , void *arg,
 */
 sys_prot_t sys_arch_protect(void)
 {
-#if (osCMSIS < 0x20000U)
   osMutexWait(lwip_sys_mutex, osWaitForever);
-#else
-  osMutexAcquire(lwip_sys_mutex, osWaitForever);
-#endif
   return (sys_prot_t)1;
 }
 

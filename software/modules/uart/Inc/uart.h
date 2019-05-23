@@ -57,7 +57,7 @@ stprint("\n\r\033cBOOTED\n------\n");
 
 #define ST_USART huart3
 #define ST_USART_LL USART3
-#define DBG_LINE_SIZE 32
+#define DBG_LINE_SIZE 56
 #define RETURN_CHAR '\r'
 #define CMD_CHAR '#'
 #define SEP_CHAR ' '
@@ -69,8 +69,6 @@ stprint("\n\r\033cBOOTED\n------\n");
 void stprint(char* format, ...);
 void stclear();
 void isrprint(char* format, ...);
-void uartTask();
-void commandParserTask();
 void uartInit();
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart);
 void UART_CharReception_Callback();
