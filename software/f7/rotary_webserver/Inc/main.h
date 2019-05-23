@@ -83,6 +83,12 @@ void Error_Handler(void);
 #define RE_L2_GPIO_Port GPIOF
 #define RE_L3_Pin GPIO_PIN_10
 #define RE_L3_GPIO_Port GPIOE
+#define RE_B_Pin GPIO_PIN_12
+#define RE_B_GPIO_Port GPIOE
+#define RE_C_Pin GPIO_PIN_14
+#define RE_C_GPIO_Port GPIOE
+#define RE_A_Pin GPIO_PIN_15
+#define RE_A_GPIO_Port GPIOE
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
 #define LDERR_Pin GPIO_PIN_14
@@ -91,10 +97,10 @@ void Error_Handler(void);
 #define STLK_RX_GPIO_Port GPIOD
 #define STLK_TX_Pin GPIO_PIN_9
 #define STLK_TX_GPIO_Port GPIOD
-#define LDDBG_Pin GPIO_PIN_11
-#define LDDBG_GPIO_Port GPIOD
-#define LDTX_Pin GPIO_PIN_12
-#define LDTX_GPIO_Port GPIOD
+#define RE_L1_Pin GPIO_PIN_11
+#define RE_L1_GPIO_Port GPIOD
+#define RE_SW_Pin GPIO_PIN_12
+#define RE_SW_GPIO_Port GPIOD
 #define LDRX_Pin GPIO_PIN_13
 #define LDRX_GPIO_Port GPIOD
 #define USB_PowerSwitchOn_Pin GPIO_PIN_6
@@ -127,6 +133,8 @@ void Error_Handler(void);
 #define RMII_TX_EN_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
+#define RE_VCC_Pin GPIO_PIN_14
+#define RE_VCC_GPIO_Port GPIOG
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 #define LDBTN_Pin GPIO_PIN_7

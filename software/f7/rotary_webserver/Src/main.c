@@ -261,16 +261,19 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOF, LED_GND_Pin|RE_L2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(RE_L3_GPIO_Port, RE_L3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, RE_L3_Pin|RE_C_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LDDBG_Pin|LDRED_Pin|LDYEL_Pin|LDGRE_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, RE_L1_Pin|LDRED_Pin|LDYEL_Pin|LDGRE_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LDTX_Pin|LDRX_Pin|GND_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, LDRX_Pin|GND_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_PowerSwitchOn_GPIO_Port, USB_PowerSwitchOn_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(RE_VCC_GPIO_Port, RE_VCC_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : USRBTN_Pin */
   GPIO_InitStruct.Pin = USRBTN_Pin;
@@ -292,28 +295,40 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : RE_L3_Pin */
-  GPIO_InitStruct.Pin = RE_L3_Pin;
+  /*Configure GPIO pins : RE_L3_Pin RE_C_Pin */
+  GPIO_InitStruct.Pin = RE_L3_Pin|RE_C_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(RE_L3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LDDBG_Pin LDTX_Pin LDRX_Pin LDRED_Pin 
-                           LDYEL_Pin LDGRE_Pin GND_Pin */
-  GPIO_InitStruct.Pin = LDDBG_Pin|LDTX_Pin|LDRX_Pin|LDRED_Pin 
-                          |LDYEL_Pin|LDGRE_Pin|GND_Pin;
+  /*Configure GPIO pins : RE_B_Pin RE_A_Pin */
+  GPIO_InitStruct.Pin = RE_B_Pin|RE_A_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : RE_L1_Pin LDRX_Pin LDRED_Pin LDYEL_Pin 
+                           LDGRE_Pin GND_Pin */
+  GPIO_InitStruct.Pin = RE_L1_Pin|LDRX_Pin|LDRED_Pin|LDYEL_Pin 
+                          |LDGRE_Pin|GND_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : USB_PowerSwitchOn_Pin */
-  GPIO_InitStruct.Pin = USB_PowerSwitchOn_Pin;
+  /*Configure GPIO pin : RE_SW_Pin */
+  GPIO_InitStruct.Pin = RE_SW_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(RE_SW_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : USB_PowerSwitchOn_Pin RE_VCC_Pin */
+  GPIO_InitStruct.Pin = USB_PowerSwitchOn_Pin|RE_VCC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(USB_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_OverCurrent_Pin */
   GPIO_InitStruct.Pin = USB_OverCurrent_Pin;
