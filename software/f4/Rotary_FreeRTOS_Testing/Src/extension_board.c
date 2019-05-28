@@ -18,6 +18,7 @@ extern int level;
 extern int maxCount;
 extern int steps;
 extern TIM_HandleTypeDef htim2;
+
 void extension_board(void *pvParameters)
 {
   /* Infinite loop */
@@ -43,7 +44,13 @@ void extension_board(void *pvParameters)
 
 
 
-
+	  if(change){
+		  if(level == 0)
+			  level = maxCount;
+		  else
+			  level = 0;
+		  change = 0;
+	  }
 	  if((HAL_GPIO_ReadPin(RE_A_GPIO_Port, RE_A_Pin) == GPIO_PIN_SET) && (HAL_GPIO_ReadPin(RE_B_GPIO_Port, RE_B_Pin) == GPIO_PIN_SET)){
 		  check = 0;
 	  }
@@ -53,11 +60,17 @@ void extension_board(void *pvParameters)
 		  {
 			  HAL_GPIO_WritePin(RE_L2_GPIO_Port, RE_L2_Pin, GPIO_PIN_SET);
 			  HAL_GPIO_WritePin(RE_L3_GPIO_Port, RE_L3_Pin, GPIO_PIN_RESET);
-			  if(level >= factor*factor)
+			  if(level >= factor)
 			  {
 				  level = level/factor;
-				  //sprintf(levelString, "%i\n\r", level);
-				  	//  UART_Send_String(levelString);
+				  sprintf(levelString, "%i\n\r", level);
+				  UART_Send_String(levelString);
+			  }
+			  else if(level >= 1)
+			  {
+				  level = 0;
+				  sprintf(levelString, "%i\n\r", (int)level);
+				  UART_Send_String(levelString);
 			  }
 			  check = 3;
 		  }
@@ -72,11 +85,17 @@ void extension_board(void *pvParameters)
 		  {
 			  HAL_GPIO_WritePin(RE_L2_GPIO_Port, RE_L2_Pin, GPIO_PIN_RESET);
 			  HAL_GPIO_WritePin(RE_L3_GPIO_Port, RE_L3_Pin, GPIO_PIN_SET);
-			  if(level <= (maxCount/factor))
+			  if(level == 0)
+			  {
+				  level = 1;
+				  sprintf(levelString, "%i\n\r", (int)level);
+				  UART_Send_String(levelString);
+			  }
+			  else if(level <= (maxCount/factor))
 			  {
 				  level = level*factor;
-				  //sprintf(levelString, "%i\n\r", (int)level);
-				  	//   UART_Send_String(levelString);
+				  sprintf(levelString, "%i\n\r", (int)level);
+				  UART_Send_String(levelString);
 			  }
 			  check = 3;
 		  }

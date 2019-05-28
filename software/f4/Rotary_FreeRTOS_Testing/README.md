@@ -1,7 +1,8 @@
 # `[WIP]`
-# Rotary testen mit exponentieller Skalierung
+# Rotary testen mit Implementierung des Tasters
 
-Möglicherweise optisch interessanter
+Der Taster des Rotary Encoders soll verwendet werden, um den Helligkeitswert auf
+0, bzw. von 0 aufs Maximum zu setzten. 
 
 
 ## Problem
