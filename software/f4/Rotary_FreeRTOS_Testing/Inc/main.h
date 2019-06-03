@@ -116,6 +116,8 @@ void UART_Send_Int(uint8_t*);
 #define RE_L3_GPIO_Port GPIOE
 #define RE_B_Pin GPIO_PIN_12
 #define RE_B_GPIO_Port GPIOE
+#define RE_SW_GND_Pin GPIO_PIN_13
+#define RE_SW_GND_GPIO_Port GPIOE
 #define RE_C_Pin GPIO_PIN_14
 #define RE_C_GPIO_Port GPIOE
 #define RE_A_Pin GPIO_PIN_15
@@ -132,6 +134,7 @@ void UART_Send_Int(uint8_t*);
 #define RE_L1_GPIO_Port GPIOD
 #define RE_SW_Pin GPIO_PIN_12
 #define RE_SW_GPIO_Port GPIOD
+#define RE_SW_EXTI_IRQn EXTI15_10_IRQn
 #define USB_PowerSwitchOn_Pin GPIO_PIN_6
 #define USB_PowerSwitchOn_GPIO_Port GPIOG
 #define USB_OverCurrent_Pin GPIO_PIN_7

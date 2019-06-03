@@ -85,10 +85,11 @@ osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
 uint8_t buffer[4];
 char receiveChar;
+int change = 0;
 int count = 0;
 int factor = 2;
 int level = 0;
-int steps = 10;
+int steps = 6;
 int maxCount = 0;
 /* USER CODE END PV */
 
@@ -133,8 +134,8 @@ void UART_Test()
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	level = 32;  	//pow(factor,(steps/2));
-	maxCount = 1024;	//pow(factor,steps);
+	level = factor;
+	maxCount = pow(factor,(steps-2));
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -424,7 +425,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOF, LED_GND_Pin|RE_L2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, RE_L3_Pin|RE_C_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, RE_L3_Pin|RE_SW_GND_Pin|RE_C_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RE_L1_GPIO_Port, RE_L1_Pin, GPIO_PIN_RESET);
@@ -455,8 +456,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : RE_L3_Pin RE_C_Pin */
-  GPIO_InitStruct.Pin = RE_L3_Pin|RE_C_Pin;
+  /*Configure GPIO pins : RE_L3_Pin RE_SW_GND_Pin RE_C_Pin */
+  GPIO_InitStruct.Pin = RE_L3_Pin|RE_SW_GND_Pin|RE_C_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -477,7 +478,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : RE_SW_Pin */
   GPIO_InitStruct.Pin = RE_SW_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(RE_SW_GPIO_Port, &GPIO_InitStruct);
 
