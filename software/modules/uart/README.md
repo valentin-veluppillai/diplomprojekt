@@ -23,7 +23,7 @@ initializes the uart interface
 * delete the line declaring huartx in main.c (x is an number, default is 3)
 * include uart.h in your main.h
 * add this to your variable declaration:
-```
+```c
 #ifdef UART_H_
 extern SemaphoreHandle_t mutexSerialCom;
 extern SemaphoreHandle_t mutexUART3;
@@ -33,14 +33,14 @@ extern UART_HandleTypeDef huart3;
 ```
 
 * add the following code to USARTx_IRQ_Handler() in stm32xxxx_it.c:
-```
+```c
 if(LL_USART_IsActiveFlag_RXNE(ST_USART_LL) && LL_USART_IsEnabledIT_RXNE(ST_USART_LL))
         UART_CharReception_Callback();
 HAL_UART_IRQHandler(&huart3);
 ```
 
 * add the following code to your startup task
-```
+```c
 uartInit();
 stprint("\r\033cBOOTED\n------\n");
 ```
