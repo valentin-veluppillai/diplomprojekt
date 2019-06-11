@@ -5,7 +5,7 @@ Die Helligkeitsänderungen sind um einiges besser sichtbar als bei einer
 linearen Skalierung.
 
 
-## Problem
+## Limitierung
 ### Speed
 Mehr als 6 Stufen(0,1,2,4,8,16) sind aktuell nicht realisierbar, da sich die
 Helligkeit pro Stufe um Faktor 2 ändert. Dementsprechend wird die Frequenz des

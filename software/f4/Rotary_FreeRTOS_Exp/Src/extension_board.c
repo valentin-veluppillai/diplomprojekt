@@ -2,7 +2,7 @@
  * extension_board.c
  *
  *  Created on: 10.05.2019
- *      Author: Harald
+ *      Author: Harald Korinek
  */
 
 #include "main.h"
@@ -10,17 +10,16 @@
 #include "string.h"
 #include "extension_board.h"
 
-int check = 0;
-char pulseString[20];
-extern int count;
-extern int factor;
-extern int pulse;
-extern int period;
-extern int steps;
-extern TIM_HandleTypeDef htim2;
+
 
 void extension_board(void *pvParameters)
 {
+  int check = 0;
+  extern int count;
+  extern int factor;
+  extern int pulse;
+  extern int period;
+
   /* Infinite loop */
   while (1)
   {
@@ -29,6 +28,8 @@ void extension_board(void *pvParameters)
 		  pulse = period;
 	  }
 
+	  /* PWM generation
+	     The count variable is incremented in the ISR*/
 	  if((count >= 0)&&(count < pulse))
 	  {
 		  HAL_GPIO_WritePin(RE_L1_GPIO_Port, RE_L1_Pin, GPIO_PIN_SET);
@@ -42,10 +43,10 @@ void extension_board(void *pvParameters)
 	  	  count = 0;
 	  }
 
-
-
-
-	  if((HAL_GPIO_ReadPin(RE_A_GPIO_Port, RE_A_Pin) == GPIO_PIN_SET) && (HAL_GPIO_ReadPin(RE_B_GPIO_Port, RE_B_Pin) == GPIO_PIN_SET)){
+	  /* Rotation check
+	     Determines the direction of rotation and changes pulse width and directional LEDs accordingly*/
+	  if((HAL_GPIO_ReadPin(RE_A_GPIO_Port, RE_A_Pin) == GPIO_PIN_SET) && (HAL_GPIO_ReadPin(RE_B_GPIO_Port, RE_B_Pin) == GPIO_PIN_SET))
+	  {
 		  check = 0;
 	  }
 	  else if((HAL_GPIO_ReadPin(RE_B_GPIO_Port, RE_B_Pin) == GPIO_PIN_RESET) && (HAL_GPIO_ReadPin(RE_A_GPIO_Port, RE_A_Pin) == GPIO_PIN_SET))
@@ -57,14 +58,10 @@ void extension_board(void *pvParameters)
 			  if(pulse >= factor)
 			  {
 				  pulse = pulse/factor;
-				  sprintf(pulseString, "%i\n\r", pulse);
-				  UART_Send_String(pulseString);
 			  }
 			  else if(pulse >= 1)
 			  {
 				  pulse = 0;
-				  sprintf(pulseString, "%i\n\r", (int)pulse);
-				  UART_Send_String(pulseString);
 			  }
 			  check = 3;
 		  }
@@ -82,14 +79,10 @@ void extension_board(void *pvParameters)
 			  if(pulse == 0)
 			  {
 				  pulse = 1;
-				  sprintf(pulseString, "%i\n\r", (int)pulse);
-				  UART_Send_String(pulseString);
 			  }
 			  else if(pulse <= (period/factor))
 			  {
 				  pulse = pulse*factor;
-				  sprintf(pulseString, "%i\n\r", (int)pulse);
-				  UART_Send_String(pulseString);
 			  }
 			  check = 3;
 		  }

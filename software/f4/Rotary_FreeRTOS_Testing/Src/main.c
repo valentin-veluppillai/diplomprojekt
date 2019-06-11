@@ -88,9 +88,9 @@ char receiveChar;
 int change = 0;
 int count = 0;
 int factor = 2;
-int level = 0;
+int pulse = 0;
 int steps = 6;
-int maxCount = 0;
+int period = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -134,8 +134,8 @@ void UART_Test()
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	level = factor;
-	maxCount = pow(factor,(steps-2));
+	pulse = factor;
+	period = pow(factor,(steps-2));
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
